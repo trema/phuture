@@ -36,6 +36,24 @@ Then(/^a vhost named "(.*?)" launches$/) do |name|
   step %(a file named "vhost.#{name}.pid" should exist)
 end
 
+Then(/^a netns named "(.*?)" launches$/) do |name|
+  expect(`ip netns`).to match(/^#{name}$/)
+end
+
+Then(/"(.*?)" is "(.*?)" in netns "(.*?)"/) do |key, value, netns|
+  command =
+    case key
+    when 'netmask'
+      "ip addr list dev #{netns} | grep inet"
+    when 'default_gateway'
+      'ip route list match 0/0'
+    else
+      'ip link list ; ip addr list'
+    end
+
+  expect(`sudo ip netns exec #{netns} #{command}`).to match(/#{value}/)
+end
+
 Then(/^a link is created between "(.*?)" and "(.*?)"$/) do |name_a, name_b|
   cd('.') do
     link = Phut::Parser.new.parse(@config_file).fetch([name_a, name_b].sort)
