@@ -33,7 +33,8 @@ module Phut
       sh "sudo ip netns exec #{name} ifconfig lo 127.0.0.1"
       sh "sudo ip netns exec #{name}"\
          " ifconfig #{network_device} #{ip} netmask #{netmask}"
-      sh "sudo ip netns exec #{name} route add -net #{net} gw #{gateway}"
+      sh "sudo ip netns exec #{name}"\
+         " route add -net #{net} gw #{gateway}" if gateway
     end
     # rubocop:enable AbcSize
 
