@@ -26,20 +26,52 @@ module Phut
       @logger = logger
     end
 
-    # rubocop:disable AbcSize
     def run
-      sh "sudo ip netns add #{name}"
-      sh "sudo ip link set dev #{network_device} netns #{name}"
-      sh "sudo ip netns exec #{name} ifconfig lo 127.0.0.1"
-      sh "sudo ip netns exec #{name}"\
-         " ifconfig #{network_device} #{ip} netmask #{netmask}"
-      sh "sudo ip netns exec #{name}"\
-         " route add -net #{net} gw #{gateway}" if gateway
+      setup_netns
+      setup_link
+      setup_ip
     end
-    # rubocop:enable AbcSize
 
     def stop
       sh "sudo ip netns delete #{name}"
+    end
+
+    private
+
+    def setup_netns
+      sh "sudo ip netns add #{name}"
+      sh "sudo ip link set dev #{network_device} netns #{name}"
+    end
+
+    def setup_link
+      setup_vlan
+      setup_mac_address
+    end
+
+    def setup_vlan
+      return unless vlan
+      sh "sudo ip netns exec #{name}"\
+        " ifconfig #{network_device} up"
+      sh "sudo ip netns exec #{name}"\
+        " ip link add link #{network_device} name"\
+        " #{network_device}#{vlan_suffix} type vlan id #{vlan}"
+    end
+
+    def setup_mac_address
+      sh "sudo ip netns exec #{name}"\
+        " ip link set #{network_device}#{vlan_suffix} address #{mac}" if mac
+    end
+
+    def setup_ip
+      sh "sudo ip netns exec #{name} ifconfig lo 127.0.0.1"
+      sh "sudo ip netns exec #{name}"\
+        " ifconfig #{network_device}#{vlan_suffix} #{ip} netmask #{netmask}"
+      sh "sudo ip netns exec #{name}"\
+        " route add -net #{net} gw #{gateway}" if gateway
+    end
+
+    def vlan_suffix
+      vlan ? ".#{vlan}" : ''
     end
 
     def method_missing(message, *_args)
