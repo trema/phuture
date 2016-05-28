@@ -46,12 +46,15 @@ module Phut
     def setup_link
       setup_vlan
       setup_mac_address
+      sh "sudo ip netns exec #{name} ip link set lo up"
+      sh "sudo ip netns exec #{name}"\
+        " ip link set #{network_device}#{vlan_suffix} up"
     end
 
     def setup_vlan
       return unless vlan
       sh "sudo ip netns exec #{name}"\
-        " ifconfig #{network_device} up"
+        " ip link set #{network_device} up"
       sh "sudo ip netns exec #{name}"\
         " ip link add link #{network_device} name"\
         " #{network_device}#{vlan_suffix} type vlan id #{vlan}"
@@ -63,11 +66,11 @@ module Phut
     end
 
     def setup_ip
-      sh "sudo ip netns exec #{name} ifconfig lo 127.0.0.1"
+      sh "sudo ip netns exec #{name} ip addr replace 127.0.0.1 dev lo"
       sh "sudo ip netns exec #{name}"\
-        " ifconfig #{network_device}#{vlan_suffix} #{ip} netmask #{netmask}"
+        " ip addr replace #{ip}/#{netmask} dev #{network_device}#{vlan_suffix}"
       sh "sudo ip netns exec #{name}"\
-        " route add -net #{net} gw #{gateway}" if gateway
+        " ip route add #{net} via #{gateway}" if gateway
     end
 
     def vlan_suffix
