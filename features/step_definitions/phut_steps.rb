@@ -65,6 +65,28 @@ Then(/^a vhost named "(.*?)" launches$/) do |name|
   step %(a file named "./tmp/pids/vhost.#{name}.pid" should exist)
 end
 
+Then(/^a netns named "(.*?)" launches$/) do |name|
+  expect(`ip netns`).to match(/^#{name}$/)
+end
+
+# rubocop:disable LineLength
+Then(/^the "(.*?)" of the netns "(.*?)" should be "(.*?)"$/) do |key, netns, value|
+  command =
+    case key
+    when 'netmask'
+      "ip addr list dev #{netns} | grep inet"
+    when 'default_gateway'
+      'ip route list match 0/0'
+    when 'vlan'
+      "ip link list dev #{netns}.#{value}"
+    else
+      'ip link list ; ip addr list'
+    end
+
+  expect(`sudo ip netns exec #{netns} #{command}`).to match(/#{value}/)
+end
+# rubocop:enable LineLength
+
 Then(/^a link is created between "(.*?)" and "(.*?)"$/) do |name_a, name_b|
   expect(Phut::Link.find([name_a, name_b])).not_to be_nil
 end
