@@ -2,6 +2,7 @@
 require 'phut/shell_runner'
 require 'pio'
 require 'active_flow'
+require 'ostruct'
 
 module Phut
   # ovs-vsctl wrapper
