@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 require 'phut/shell_runner'
 require 'phut/ovsdb'
+require 'phut/port'
 require 'pio'
-require 'ostruct'
 
 module Phut
   # ovs-vsctl wrapper
@@ -100,7 +100,9 @@ module Phut
           select('Interface', [[:name, :==, iface[:rows].first[:name]]], [:ofport, :name])
         end
         @client.transact(1, 'Open_vSwitch', iface_query).map do |iface|
-          OpenStruct.new(iface[:rows].first)
+          device = iface[:rows].first[:name]
+          number = iface[:rows].first[:ofport]
+          Phut::Port.new(device: device, number: number)
         end
       else
         []
