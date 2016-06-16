@@ -35,12 +35,12 @@ module Phut
     end
 
     def add_bridge
-      sudo "ovs-vsctl add-br #{@bridge}"
+      sudo "ovs-vsctl --may-exist add-br #{@bridge}"
       sudo "/sbin/sysctl -w net.ipv6.conf.#{@bridge}.disable_ipv6=1 -q"
     end
 
     def del_bridge
-      sudo "ovs-vsctl del-br #{@bridge}"
+      sudo "ovs-vsctl --if-exists del-br #{@bridge}"
     end
 
     def set_manager
@@ -64,7 +64,7 @@ module Phut
     end
 
     def add_port(device)
-      sudo "ovs-vsctl add-port #{@bridge} #{device}"
+      sudo "ovs-vsctl --may-exist add-port #{@bridge} #{device}"
       nil
     end
 
@@ -97,13 +97,15 @@ module Phut
           select('Port', [[:_uuid, :==, port]], [:name])
         end
         iface_query = @client.transact(1, 'Open_vSwitch', port_query).map do |iface|
-          select('Interface', [[:name, :==, iface[:rows].first[:name]]], [:ofport, :name])
+          select('Interface', [[:name, :==, iface[:rows].first[:name]],
+                               [:name, :!=, @bridge]], [:ofport, :name])
         end
         @client.transact(1, 'Open_vSwitch', iface_query).map do |iface|
+          next unless iface[:rows].first.respond_to?(:[])
           device = iface[:rows].first[:name]
           number = iface[:rows].first[:ofport]
           Phut::Port.new(device: device, number: number)
-        end
+        end.compact
       else
         []
       end
