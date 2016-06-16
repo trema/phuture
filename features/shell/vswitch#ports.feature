@@ -11,7 +11,10 @@ Feature: Vswitch#ports
   Scenario: Vswitch#ports #=> []
     When I type "vswitch.ports"
     And sleep 5
-    Then the output should contain "[]"
+    Then the output should contain:
+    """
+    #<OpenStruct name="vsw_0xabc", ofport=65534>
+    """
 
   @sudo
   Scenario: Vswitch#ports
@@ -20,9 +23,9 @@ Feature: Vswitch#ports
     When I type "vswitch.ports"
     And sleep 5
     Then the output should contain:
-     """
-     ["L0_a"]
-     """
+    """
+    #<OpenStruct name="L0_a", ofport=1>
+    """
 
   @sudo
   Scenario: Vswitch#ports
@@ -31,6 +34,6 @@ Feature: Vswitch#ports
     When I type "vswitch.ports"
     And sleep 5
     Then the output should contain:
-     """
-     ["L0_a"]
-     """
+    """
+    #<OpenStruct name="L0_a", ofport=2>
+    """
