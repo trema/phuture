@@ -3,8 +3,6 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'active_flow', github: 'shun159/active_flow', branch: 'feature/ovsdb/core'
-
 group :guard do
   gem 'guard', require: false
   gem 'guard-bundler', require: false

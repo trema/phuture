@@ -1,32 +1,17 @@
-GIT
-  remote: git://github.com/shun159/active_flow.git
-  revision: cfca63f79a926cdf6733f523bac05ea859331fd8
-  branch: feature/ovsdb/core
-  specs:
-    active_flow (0.0.1)
-      activemodel (~> 4.2, >= 4.2.6)
-      activesupport (~> 4.2, >= 4.2.6)
-      bundler (~> 1.11.2)
-      ffi-yajl (~> 2.2.3)
-      multi_json (>= 1.11.1)
-      representable (~> 3.0.0)
-      yajl-ruby (~> 1.2.1)
-
 PATH
   remote: .
   specs:
     phut (0.7.7)
       activesupport (~> 4.2.6)
+      ffi-yajl (~> 2.2.3)
       gli (~> 2.13.4)
       pio (~> 0.30.0)
       pry (~> 0.10.3)
+      yajl-ruby (~> 1.2.1)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activemodel (4.2.6)
-      activesupport (= 4.2.6)
-      builder (~> 3.1)
     activesupport (4.2.6)
       i18n (~> 0.7)
       json (~> 1.7, >= 1.7.7)
@@ -75,8 +60,6 @@ GEM
     cucumber-core (1.5.0)
       gherkin (~> 4.0)
     cucumber-wire (0.0.1)
-    declarative (0.0.7)
-      uber (>= 0.0.15)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.2.5)
@@ -155,6 +138,7 @@ GEM
     pio (0.30.0)
       activesupport (~> 4.2, >= 4.2.4)
       bindata (~> 2.1.0)
+      bundler (~> 1.11.2)
     powerpack (0.1.1)
     pry (0.10.3)
       coderay (~> 1.1.0)
@@ -173,9 +157,6 @@ GEM
       archive-tar-minitar (>= 0.5.2)
       json (>= 1.4.6)
       rest-client (>= 1.7.2)
-    representable (3.0.0)
-      declarative (~> 0.0.5)
-      uber (~> 0.0.15)
     rest-client (1.8.0)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
@@ -221,7 +202,6 @@ GEM
     tins (1.6.0)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
-    uber (0.0.15)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.2)
@@ -238,7 +218,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  active_flow!
   aruba
   codeclimate-test-reporter
   coveralls
