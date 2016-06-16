@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 require 'phut/shell_runner'
 require 'pio'
+require 'active_flow'
 
 module Phut
   # ovs-vsctl wrapper
   class Vsctl
     extend ShellRunner
+    include ActiveFlow::OVSDB::Transact
+    extend ActiveFlow::OVSDB::Transact
 
     def self.list_br(prefix)
       sudo('ovs-vsctl list-br').split.each_with_object([]) do |each, list|
@@ -18,6 +21,7 @@ module Phut
     include ShellRunner
 
     def initialize(name:, name_prefix:, dpid:, bridge:)
+      @client = ActiveFlow::OVSDB::Client.new('localhost', 6632)
       @name = name
       @prefix = name_prefix
       @dpid = dpid
@@ -36,6 +40,10 @@ module Phut
 
     def del_bridge
       sudo "ovs-vsctl del-br #{@bridge}"
+    end
+
+    def set_manager
+      sudo 'ovs-vsctl set-manager ptcp:6632'
     end
 
     def set_openflow_version_and_dpid
@@ -75,7 +83,22 @@ module Phut
     end
 
     def ports
-      sudo("ovs-vsctl list-ports #{@bridge}").split
+      br_query = [select('Bridge', [[:name, :==, @bridge]], [:ports])]
+      br_ports = @client.transact(1, 'Open_vSwitch', br_query).first[:rows].first[:ports]
+      ports = if br_ports.include? "set"
+                br_ports[1]
+              else
+                [br_ports]
+              end
+      port_query = ports.map do |port|
+        select('Port', [[:_uuid, :==, port]], [:name])
+      end
+      iface_query = @client.transact(1, 'Open_vSwitch', port_query).map do |iface|
+        select('Interface', [[:name, :==, iface[:rows].first[:name]]], [:ofport, :name])
+      end
+      @client.transact(1, 'Open_vSwitch', iface_query).map do |iface|
+        OpenStruct.new(iface[:rows].first)
+      end
     end
 
     private

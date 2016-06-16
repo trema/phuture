@@ -123,6 +123,7 @@ module Phut
     private
 
     def start
+      @vsctl.set_manager
       @vsctl.add_bridge
       @vsctl.set_openflow_version_and_dpid
       @vsctl.controller_tcp_port = @tcp_port
