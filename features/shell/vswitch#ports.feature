@@ -24,7 +24,7 @@ Feature: Vswitch#ports
     And sleep 5
     Then the output should contain:
     """
-    [#<Port device: "L0_a", number: 1>]
+    [#<Port number: 1, device: "L0_a">]
     """
 
   @sudo
@@ -35,5 +35,5 @@ Feature: Vswitch#ports
     And sleep 5
     Then the output should contain:
     """
-    [#<Port device: "L0_a", number: 2>]
+    [#<Port number: 2, device: "L0_a">]
     """

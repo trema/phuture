@@ -11,11 +11,11 @@ module Phut
     end
 
     def inspect
-      "#<Port device: \"#{device}\", number: #{number}>"
+      "#<Port number: #{number}, device: \"#{device}\">"
     end
 
     def to_s
-      "port (device = #{device}, number = #{number})"
+      "port (number = #{number}, device = #{device})"
     end
   end
 end
