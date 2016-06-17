@@ -1,7 +1,7 @@
 module Phut
   module OVSDB
-    # Transact Operations
-    module Transact
+    # Transaction
+    module Transaction
       def select(table, conds, cols = nil)
         select = {
           op: :select,

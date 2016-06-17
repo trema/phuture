@@ -8,8 +8,8 @@ module Phut
   # ovs-vsctl wrapper
   class Vsctl
     extend ShellRunner
-    include Phut::OVSDB::Transact
-    extend Phut::OVSDB::Transact
+    include Phut::OVSDB::Transaction
+    extend Phut::OVSDB::Transaction
 
     def self.list_br(prefix)
       sudo('ovs-vsctl list-br').split.each_with_object([]) do |each, list|

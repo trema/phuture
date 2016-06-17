@@ -1,5 +1,5 @@
 require 'phut/ovsdb/client'
-require 'phut/ovsdb/transact'
+require 'phut/ovsdb/transaction'
 
 module Phut
   # OVSDB client core
