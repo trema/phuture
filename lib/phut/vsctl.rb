@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 require 'phut/shell_runner'
+require 'phut/ovsdb'
+require 'phut/port'
 require 'pio'
 
 module Phut
   # ovs-vsctl wrapper
   class Vsctl
     extend ShellRunner
+    include Phut::OVSDB::Transaction
+    extend Phut::OVSDB::Transaction
 
     def self.list_br(prefix)
       sudo('ovs-vsctl list-br').split.each_with_object([]) do |each, list|
@@ -18,6 +22,7 @@ module Phut
     include ShellRunner
 
     def initialize(name:, name_prefix:, dpid:, bridge:)
+      @client = Phut::OVSDB::Client.new('localhost', 6632)
       @name = name
       @prefix = name_prefix
       @dpid = dpid
@@ -30,12 +35,16 @@ module Phut
     end
 
     def add_bridge
-      sudo "ovs-vsctl add-br #{@bridge}"
+      sudo "ovs-vsctl --may-exist add-br #{@bridge}"
       sudo "/sbin/sysctl -w net.ipv6.conf.#{@bridge}.disable_ipv6=1 -q"
     end
 
     def del_bridge
-      sudo "ovs-vsctl del-br #{@bridge}"
+      sudo "ovs-vsctl --if-exists del-br #{@bridge}"
+    end
+
+    def set_manager
+      sudo 'ovs-vsctl set-manager ptcp:6632'
     end
 
     def set_openflow_version_and_dpid
@@ -55,7 +64,7 @@ module Phut
     end
 
     def add_port(device)
-      sudo "ovs-vsctl add-port #{@bridge} #{device}"
+      sudo "ovs-vsctl --may-exist add-port #{@bridge} #{device}"
       nil
     end
 
@@ -75,7 +84,31 @@ module Phut
     end
 
     def ports
-      sudo("ovs-vsctl list-ports #{@bridge}").split
+      br_query = [select('Bridge', [[:name, :==, @bridge]], [:ports])]
+      br_ports = @client.transact(1, 'Open_vSwitch', br_query)
+      if br_ports.first[:rows].first
+        br_ports = br_ports.first[:rows].first[:ports]
+        ports = if br_ports.include? "set"
+                  br_ports[1]
+                else
+                  [br_ports]
+                end
+        port_query = ports.map do |port|
+          select('Port', [[:_uuid, :==, port]], [:name])
+        end
+        iface_query = @client.transact(1, 'Open_vSwitch', port_query).map do |iface|
+          select('Interface', [[:name, :==, iface[:rows].first[:name]],
+                               [:name, :!=, @bridge]], [:ofport, :name])
+        end
+        @client.transact(1, 'Open_vSwitch', iface_query).map do |iface|
+          next unless iface[:rows].first.respond_to?(:[])
+          device = iface[:rows].first[:name]
+          number = iface[:rows].first[:ofport]
+          Phut::Port.new(device: device, number: number)
+        end.compact
+      else
+        []
+      end
     end
 
     private

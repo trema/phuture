@@ -3,9 +3,11 @@ PATH
   specs:
     phut (0.7.7)
       activesupport (~> 4.2.6)
+      ffi-yajl (~> 2.2.3)
       gli (~> 2.13.4)
       pio (~> 0.30.0)
       pry (~> 0.10.3)
+      yajl-ruby (~> 1.2.1)
 
 GEM
   remote: https://rubygems.org/
@@ -69,6 +71,8 @@ GEM
     faker (1.6.3)
       i18n (~> 0.5)
     ffi (1.9.10)
+    ffi-yajl (2.2.3)
+      libyajl2 (~> 1.2)
     flay (2.8.0)
       erubis (~> 2.7.0)
       path_expander (~> 1.0)
@@ -113,6 +117,7 @@ GEM
     i18n (0.7.0)
     ice_nine (0.11.2)
     json (1.8.3)
+    libyajl2 (1.2.0)
     listen (3.0.8)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -133,6 +138,7 @@ GEM
     pio (0.30.0)
       activesupport (~> 4.2, >= 4.2.4)
       bindata (~> 2.1.0)
+      bundler (~> 1.11.2)
     powerpack (0.1.1)
     pry (0.10.3)
       coderay (~> 1.1.0)
@@ -205,6 +211,7 @@ GEM
       coercible (~> 1.0)
       descendants_tracker (~> 0.0, >= 0.0.3)
       equalizer (~> 0.0, >= 0.0.9)
+    yajl-ruby (1.2.1)
     yard (0.8.7.6)
 
 PLATFORMS

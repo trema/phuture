@@ -11,7 +11,10 @@ Feature: Vswitch#ports
   Scenario: Vswitch#ports #=> []
     When I type "vswitch.ports"
     And sleep 5
-    Then the output should contain "[]"
+    Then the output should contain:
+    """
+    []
+    """
 
   @sudo
   Scenario: Vswitch#ports
@@ -20,9 +23,9 @@ Feature: Vswitch#ports
     When I type "vswitch.ports"
     And sleep 5
     Then the output should contain:
-     """
-     ["L0_a"]
-     """
+    """
+    [#<Port number: 1, device: "L0_a">]
+    """
 
   @sudo
   Scenario: Vswitch#ports
@@ -31,6 +34,6 @@ Feature: Vswitch#ports
     When I type "vswitch.ports"
     And sleep 5
     Then the output should contain:
-     """
-     ["L0_a"]
-     """
+    """
+    [#<Port number: 2, device: "L0_a">]
+    """

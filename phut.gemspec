@@ -28,4 +28,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'gli', '~> 2.13.4'
   gem.add_dependency 'pio', '~> 0.30.0'
   gem.add_dependency 'pry', '~> 0.10.3'
+  gem.add_dependency 'ffi-yajl', '~> 2.2.3'
+  gem.add_dependency 'yajl-ruby', '~> 1.2.1'
 end
