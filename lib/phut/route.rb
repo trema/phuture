@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'phut/shell_runner'
 
 module Phut

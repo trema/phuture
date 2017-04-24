@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'active_support/core_ext/array/access'
 require 'phut/link'
 
@@ -24,7 +25,7 @@ module Phut
       context 'when there is a link' do
         Given { Link.create('foo', 'bar') }
         Then { all.size == 1 }
-        Then { all.first.names == %w(bar foo) }
+        Then { all.first.names == %w[bar foo] }
       end
     end
 
@@ -45,7 +46,7 @@ module Phut
     end
 
     describe '.find' do
-      When(:result) { Link.find(%w(foo bar)) }
+      When(:result) { Link.find(%w[foo bar]) }
 
       context 'when there is no link' do
         Then { result.nil? }
@@ -54,12 +55,12 @@ module Phut
       context 'when there is a link' do
         Given { Link.create('foo', 'bar') }
         Then { !result.nil? }
-        Then { result.names == %w(bar foo) }
+        Then { result.names == %w[bar foo] }
       end
     end
 
     describe '.select' do
-      When(:result) { Link.all.select { |each| each.names == %w(bar foo) } }
+      When(:result) { Link.all.select { |each| each.names == %w[bar foo] } }
 
       context 'when there is no link' do
         Then { result.empty? }
@@ -82,7 +83,7 @@ module Phut
       context 'when there is a link' do
         Given { Link.create('foo', 'bar') }
         Then { links.size == 1 }
-        Then { links.first.names == %w(bar foo) }
+        Then { links.first.names == %w[bar foo] }
       end
     end
 

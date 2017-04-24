@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'phut/link'
 require 'phut/syntax'
 require 'phut/vhost'

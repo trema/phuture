@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'phut/finder'
 require 'phut/route'
 require 'phut/shell_runner'
@@ -48,8 +49,6 @@ module Phut
     attr_reader :name
     attr_reader :ip_address
     attr_reader :mac_address
-
-    # rubocop:disable MethodLength
     # rubocop:disable ParameterLists
     def initialize(name:,
                    ip_address: nil,

@@ -1,5 +1,6 @@
 # coding: utf-8
 # frozen_string_literal: true
+
 require 'faker'
 require 'phut/link'
 require 'phut/vhost'

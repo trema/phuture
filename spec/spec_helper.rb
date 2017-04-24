@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'simplecov'
 require 'codeclimate-test-reporter'
 require 'coveralls'
