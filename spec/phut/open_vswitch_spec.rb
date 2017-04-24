@@ -7,7 +7,7 @@ module Phut
   describe OpenVswitch do
     def delete_all_bridge
       `sudo ovs-vsctl list-br`.chomp.split.each do |each|
-        next unless /^#{OpenVswitch.bridge_prefix}/ =~ each
+        next unless /^#{OpenVswitch.bridge_prefix}/.match?(each)
         system "sudo ovs-vsctl del-br #{each}"
       end
     end

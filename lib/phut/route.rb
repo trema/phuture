@@ -9,7 +9,7 @@ module Phut
 
     def self.read(netns)
       sudo("ip netns exec #{netns} route -n").split("\n").each do |each|
-        next unless /^(\S+)\s+(\S+)\s+\S+\s+UG\s+/ =~ each
+        next unless /^(\S+)\s+(\S+)\s+\S+\s+UG\s+/.match?(each)
         return new(net: Regexp.last_match(1),
                    gateway: Regexp.last_match(2))
       end

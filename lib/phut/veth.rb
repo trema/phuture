@@ -10,12 +10,14 @@ module Phut
 
     extend ShellRunner
 
+    # rubocop:disable LineLength
     def self.all
       Netns.all.map(&:device).compact +
         sh('ip -o link show').split("\n").map do |each|
-          /^\d+: (#{PREFIX}\d+_[^:]*?)[@:]/ =~ each ? Regexp.last_match(1) : nil
+          /^\d+: (#{PREFIX}\d+_[^:]*?)[@:]/.match?(each) ? Regexp.last_match(1) : nil
         end.compact
     end
+    # rubocop:enable LineLength
 
     def self.each(&block)
       all.each do |each|
@@ -25,12 +27,12 @@ module Phut
     end
 
     def self.parse(veth_name)
-      unless /^#{PREFIX}(\d+)_(\S+)/ =~ veth_name
+      unless /^#{PREFIX}(\d+)_(\S+)/.match?(veth_name)
         raise "Failed to parse veth name: #{veth_name}"
       end
       link_id = Regexp.last_match(1).to_i
       name = Regexp.last_match(2)
-      if /^\h{8}$/ =~ name
+      if /^\h{8}$/.match?(name)
         { name: IPAddr.new(name.hex, Socket::AF_INET).to_s, link_id: link_id }
       else
         { name: name, link_id: link_id }
@@ -50,7 +52,7 @@ module Phut
 
     # rubocop:disable LineLength
     def to_s
-      if /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/ =~ @name
+      if /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.match?(@name)
         hex = format('%x', IPAddr.new(@name).to_i)
         "#{PREFIX}#{@link_id}_#{hex}"
       else
