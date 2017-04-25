@@ -51,7 +51,7 @@ module Phut
 
     def device(name)
       found = ends.find { |each| each.name == name.to_s }
-      found.device if found
+      found&.device
     end
 
     def ==(other)

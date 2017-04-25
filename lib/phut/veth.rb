@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'English'
 require 'ipaddr'
 require 'phut/shell_runner'
 
@@ -13,15 +14,12 @@ module Phut
     def self.all
       Netns.all.map(&:device).compact +
         sh('ip link show').split("\n").map do |each|
-          match = /^\d+: #{PREFIX}(\d+)_([^:]*?)[@:]/.match(each)
-          if match
-            if /^\h{8}$/.match?(match[2])
-              new(name: IPAddr.new(match[2].hex, Socket::AF_INET), link_id: match[1].to_i)
-            else
-              new(name: match[2], link_id: match[1].to_i)
-            end
-          else
-            nil
+          case each
+          when /^\d+: #{PREFIX}(\d+)_(\h{8})[@:]/
+            ip_addr = IPAddr.new($LAST_MATCH_INFO[2].hex, Socket::AF_INET)
+            new(name: ip_addr, link_id: $LAST_MATCH_INFO[1].to_i)
+          when /^\d+: #{PREFIX}(\d+)_([^:]*?)[@:]/
+            new(name: $LAST_MATCH_INFO[2], link_id: $LAST_MATCH_INFO[1].to_i)
           end
         end.compact
     end
