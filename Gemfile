@@ -24,6 +24,7 @@ group :test do
   gem 'aruba', require: false
   gem 'cucumber', require: false
   gem 'faker', require: false
+  gem 'minitest', require: false
   gem 'rake', require: false
   gem 'rspec', require: false
   gem 'rspec-given', require: false

@@ -7,7 +7,7 @@ require 'rake/clean'
 RELISH_PROJECT = 'trema/phut'
 
 task default: :test
-task test: %i[spec cucumber quality]
+# task test: %i[spec cucumber quality]
 task travis: ['cucumber:travis', :quality]
 task quality: %i[rubocop reek flog flay]
 

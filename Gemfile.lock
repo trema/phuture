@@ -233,6 +233,7 @@ DEPENDENCIES
   guard-rspec
   guard-rubocop
   listen
+  minitest
   phut!
   pio!
   rake
