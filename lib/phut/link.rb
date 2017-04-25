@@ -9,7 +9,7 @@ module Phut
   class Link
     def self.all
       link = Hash.new { [] }
-      Veth.each { |link_id, name| link[link_id] += [name] }
+      Veth.all.each { |each| link[each.link_id] += [each.name] }
       link.map { |link_id, names| new(*names, link_id: link_id) }
     end
 
@@ -43,14 +43,15 @@ module Phut
     end
 
     def destroy
-      sudo "ip link delete #{end1}"
+      sudo "ip link delete #{end1.device}"
     rescue
-      raise "link #{end1} #{end2} does not exist!"
+      raise "link #{end1.name} #{end2.name} does not exist!"
     end
     alias stop destroy
 
     def device(name)
-      ends.find { |each| each.name == name.to_s }
+      found = ends.find { |each| each.name == name.to_s }
+      found.device if found
     end
 
     def ==(other)
@@ -68,9 +69,9 @@ module Phut
     end
 
     def add
-      sudo "ip link add name #{end1} type veth peer name #{end2}"
-      sudo "/sbin/sysctl -q -w net.ipv6.conf.#{end1}.disable_ipv6=1"
-      sudo "/sbin/sysctl -q -w net.ipv6.conf.#{end2}.disable_ipv6=1"
+      sudo "ip link add name #{end1.device} type veth peer name #{end2.device}"
+      sudo "/sbin/sysctl -q -w net.ipv6.conf.#{end1.device}.disable_ipv6=1"
+      sudo "/sbin/sysctl -q -w net.ipv6.conf.#{end2.device}.disable_ipv6=1"
     end
 
     def up?
@@ -78,8 +79,8 @@ module Phut
     end
 
     def up
-      sudo "/sbin/ifconfig #{end1} up"
-      sudo "/sbin/ifconfig #{end2} up"
+      sudo "/sbin/ifconfig #{end1.device} up"
+      sudo "/sbin/ifconfig #{end2.device} up"
     end
   end
 end
