@@ -30,6 +30,10 @@ module Phut
       @options.fetch :logger
     end
 
+    def logger=(logger)
+      @options[:logger] = logger
+    end
+
     def pid_dir
       @options.fetch :pid_dir
     end

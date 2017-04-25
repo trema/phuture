@@ -13,12 +13,12 @@ module Phut
       link.map { |link_id, names| new(*names, link_id: link_id) }
     end
 
-    def self.find(names)
-      all.find { |each| each.names == names.sort }
+    def self.find(end1, end2)
+      all.find { |each| each.ends.map(&:name) == [end1, end2].map(&:to_s).sort }
     end
 
-    def self.create(name_a, name_b)
-      new(name_a, name_b).start
+    def self.create(end1, end2)
+      new(end1, end2).start
     end
 
     def self.destroy_all
@@ -27,61 +27,59 @@ module Phut
 
     include ShellRunner
 
-    def initialize(name_a, name_b, link_id: Link.all.size)
-      raise if name_a == name_b
-      @veth_a = Veth.new(name: name_a, link_id: link_id)
-      @veth_b = Veth.new(name: name_b, link_id: link_id)
-    end
+    attr_reader :ends
 
-    def names
-      [@veth_a, @veth_b].map(&:name).sort
-    end
-
-    def device(name)
-      [@veth_a, @veth_b].each do |each|
-        return each.to_s if each.name == name.to_s
-      end
-      nil
+    def initialize(name1, name2, link_id: Link.all.size)
+      raise if name1 == name2
+      @ends = [Veth.new(name: name1, link_id: link_id),
+               Veth.new(name: name2, link_id: link_id)].sort
     end
 
     def start
-      stop if up?
+      return self if up?
       add
       up
       self
     end
 
     def destroy
-      return unless up?
-      sudo "ip link delete #{@veth_a}"
+      sudo "ip link delete #{end1}"
     rescue
-      raise "link #{@veth_a} #{@veth_b} does not exist!"
+      raise "link #{end1} #{end2} does not exist!"
     end
     alias stop destroy
 
-    def up?
-      /^#{@veth_a}\s+Link encap:Ethernet/ =~ `LANG=C ifconfig -a` || false
-    end
-
-    def connect_to?(vswitch)
-      device(vswitch.name) || false
+    def device(name)
+      ends.find { |each| each.name == name.to_s }
     end
 
     def ==(other)
-      @veth_a == other.veth_a && @veth_b == other.veth_b
+      ends == other.ends
     end
 
     private
 
+    def end1
+      ends.first
+    end
+
+    def end2
+      ends.second
+    end
+
     def add
-      sudo "ip link add name #{@veth_a} type veth peer name #{@veth_b}"
-      sudo "/sbin/sysctl -q -w net.ipv6.conf.#{@veth_a}.disable_ipv6=1"
-      sudo "/sbin/sysctl -q -w net.ipv6.conf.#{@veth_b}.disable_ipv6=1"
+      sudo "ip link add name #{end1} type veth peer name #{end2}"
+      sudo "/sbin/sysctl -q -w net.ipv6.conf.#{end1}.disable_ipv6=1"
+      sudo "/sbin/sysctl -q -w net.ipv6.conf.#{end2}.disable_ipv6=1"
+    end
+
+    def up?
+      Link.all.include? self
     end
 
     def up
-      sudo "/sbin/ifconfig #{@veth_a} up"
-      sudo "/sbin/ifconfig #{@veth_b} up"
+      sudo "/sbin/ifconfig #{end1} up"
+      sudo "/sbin/ifconfig #{end2} up"
     end
   end
 end
