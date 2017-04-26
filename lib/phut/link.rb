@@ -10,7 +10,7 @@ module Phut
     def self.all
       link = Hash.new { [] }
       Veth.all.each { |each| link[each.link_id] += [each.name] }
-      link.map { |link_id, names| new(*names, link_id: link_id) }
+      link.map { |link_id, names| new(names.first, names.second, link_id) }
     end
 
     def self.find(end1, end2)
@@ -29,7 +29,7 @@ module Phut
 
     attr_reader :ends
 
-    def initialize(name1, name2, link_id: Link.all.size)
+    def initialize(name1, name2, link_id = Link.all.size)
       raise if name1 == name2
       @ends = [Veth.new(name: name1, link_id: link_id),
                Veth.new(name: name2, link_id: link_id)].sort
@@ -43,15 +43,13 @@ module Phut
     end
 
     def destroy
-      sudo "ip link delete #{end1.device}"
-    rescue
-      raise "link #{end1.name} #{end2.name} does not exist!"
+      sudo "ip link delete #{end1}" rescue nil
+      sudo "ip link delete #{end2}" rescue nil
     end
     alias stop destroy
 
     def device(name)
-      found = ends.find { |each| each.name == name.to_s }
-      found&.device
+      ends.find { |each| each.name == name.to_s }
     end
 
     def ==(other)

@@ -41,8 +41,6 @@ module Phut
 
       link.destroy
       assert Link.all.empty?
-
-      assert_raises(RuntimeError) { link.destroy }
     end
 
     def test_ends

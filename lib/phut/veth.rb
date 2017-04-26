@@ -12,16 +12,16 @@ module Phut
     extend ShellRunner
 
     def self.all
-      Netns.all.map(&:device).compact +
-        sh('ip link show').split("\n").map do |each|
-          case each
-          when /^\d+: #{PREFIX}(\d+)_(\h{8})[@:]/
-            ip_addr = IPAddr.new($LAST_MATCH_INFO[2].hex, Socket::AF_INET)
-            new(name: ip_addr, link_id: $LAST_MATCH_INFO[1].to_i)
-          when /^\d+: #{PREFIX}(\d+)_([^:]*?)[@:]/
-            new(name: $LAST_MATCH_INFO[2], link_id: $LAST_MATCH_INFO[1].to_i)
-          end
-        end.compact
+      link_devices = sh('ip link show').split("\n").map do |each|
+        case each
+        when /^\d+: #{PREFIX}(\d+)_(\h{8})[@:]/
+          ip_addr = IPAddr.new($LAST_MATCH_INFO[2].hex, Socket::AF_INET)
+          new(name: ip_addr, link_id: $LAST_MATCH_INFO[1].to_i)
+        when /^\d+: #{PREFIX}(\d+)_([^:]*?)[@:]/
+          new(name: $LAST_MATCH_INFO[2], link_id: $LAST_MATCH_INFO[1].to_i)
+        end
+      end
+      (Netns.all.map(&:device) + link_devices).compact
     end
 
     attr_reader :link_id
@@ -43,6 +43,7 @@ module Phut
         "#{PREFIX}#{@link_id}_#{@name}"
       end
     end
+    alias to_s device
 
     def ==(other)
       name == other.name && link_id == other.link_id
