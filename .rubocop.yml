@@ -8,13 +8,11 @@ AllCops:
     - features/**/*.rb
     - lib/**/*.rb
     - phut.gemspec
-    - spec/**/*.rb
     - tasks/*.rake
 
 Metrics/LineLength:
   Exclude:
     - features/step_definitions/*_steps.rb
-    - spec/**/*_spec.rb
     - test/**/*_test.rb
 
 Metrics/MethodLength:
@@ -24,14 +22,6 @@ Metrics/MethodLength:
 Metrics/AbcSize:
   Exclude:
     - test/**/*_test.rb
-
-Metrics/BlockLength:
-  Exclude:
-    - spec/**/*_spec.rb
-
-Metrics/ModuleLength:
-  Exclude:
-    - spec/**/*_spec.rb
 
 Style/StringLiterals:
   EnforcedStyle: single_quotes
