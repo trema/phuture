@@ -66,8 +66,8 @@ module Phut
       if ENV['rvm_path']
         sh "rvmsudo vhost run #{run_options}"
       else
-        vhost = File.join(__dir__, '..', '..', 'bin', 'vhost')
-        sh "bundle exec sudo #{vhost} run #{run_options}"
+        vhost = File.expand_path('../../bin/vhost', __dir__)
+        sh "bundle exec sudo env PATH=#{ENV['PATH']} #{vhost} run #{run_options}"
       end
       sleep 1
       self.device = @device if @device

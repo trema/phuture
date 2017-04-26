@@ -16,7 +16,7 @@ module Phut
     def parse
       Syntax.new(@netns).instance_eval IO.read(@file), @file
       Link.all.each do |link|
-        Vswitch.select { |each| link.connect_to?(each) }.each do |vswitch|
+        Vswitch.select { |each| !link.device(each.name).nil? }.each do |vswitch|
           vswitch.add_port link.device(vswitch.name)
         end
       end

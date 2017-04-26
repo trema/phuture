@@ -12,7 +12,7 @@ module Phut
 
     def self.list_br(prefix)
       sudo('ovs-vsctl list-br').split.each_with_object([]) do |each, list|
-        next unless /^#{prefix}(\S+)/.match?(each)
+        next unless /^#{prefix}(\S+)/ =~ each
         name = Regexp.last_match(1)
         vsctl = new(name: name, bridge: prefix + name)
         list << { name: vsctl.name,

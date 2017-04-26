@@ -27,7 +27,7 @@ module Phut
     attr_reader :link_id
 
     def initialize(name:, link_id:)
-      @name = name
+      @name = valid_ipaddress?(name) ? IPAddr.new(name, Socket::AF_INET) : name
       @link_id = link_id
     end
 
@@ -50,6 +50,15 @@ module Phut
 
     def <=>(other)
       device <=> other.device
+    end
+
+    private
+
+    def valid_ipaddress?(string)
+      IPAddr.new(string, Socket::AF_INET)
+      true
+    rescue
+      false
     end
   end
 end

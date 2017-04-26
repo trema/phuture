@@ -16,16 +16,12 @@ module Phut
 
     def test_name
       assert_equal 'switch1', Veth.new(name: 'switch1', link_id: 0).name
-
-      ip_address = IPAddr.new('192.168.0.1', Socket::AF_INET)
-      assert_equal '192.168.0.1', Veth.new(name: ip_address, link_id: 0).name
+      assert_equal '192.168.0.1', Veth.new(name: '192.168.0.1', link_id: 0).name
     end
 
     def test_device
       assert_equal 'L0_switch1', Veth.new(name: 'switch1', link_id: 0).device
-
-      ip_address = IPAddr.new('192.168.0.1', Socket::AF_INET)
-      assert_equal 'L0_c0a80001', Veth.new(name: ip_address, link_id: 0).device
+      assert_equal 'L0_c0a80001', Veth.new(name: '192.168.0.1', link_id: 0).device
     end
 
     private
