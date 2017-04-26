@@ -17,6 +17,10 @@ Metrics/LineLength:
     - spec/**/*_spec.rb
     - test/**/*_test.rb
 
+Metrics/MethodLength:
+  Exclude:
+    - test/**/*_test.rb
+
 Metrics/AbcSize:
   Exclude:
     - test/**/*_test.rb
