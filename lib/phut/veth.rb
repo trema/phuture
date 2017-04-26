@@ -11,6 +11,7 @@ module Phut
 
     extend ShellRunner
 
+    # rubocop:disable Metrics/AbcSize
     def self.all
       link_devices = sh('ip link show').split("\n").map do |each|
         case each
@@ -23,6 +24,7 @@ module Phut
       end
       (Netns.all.map(&:device) + link_devices).compact
     end
+    # rubocop:enable Metrics/AbcSize
 
     attr_reader :link_id
 
