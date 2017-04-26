@@ -62,6 +62,7 @@ module Phut
       @name || @ip_address
     end
 
+    # rubocop:disable LineLength
     def start
       if ENV['rvm_path']
         sh "rvmsudo vhost run #{run_options}"
@@ -73,6 +74,7 @@ module Phut
       self.device = @device if @device
     end
     alias run start
+    # rubocop:enable LineLength
 
     def running?
       VhostDaemon.process(name, Phut.socket_dir).running?
