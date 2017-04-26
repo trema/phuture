@@ -84,9 +84,9 @@ module Phut
     end
 
     def device
-      if /^\d+: #{Veth::PREFIX}(\d+)_([^:\.]*?)[@:]/ =~ sudo("ip netns exec #{name} ip -o link show")
-        Veth.new(name: $LAST_MATCH_INFO[2], link_id: $LAST_MATCH_INFO[1].to_i)
-      end
+      return unless /^\d+: #{Veth::PREFIX}(\d+)_([^:\.]*?)[@:]/ =~
+                    sudo("ip netns exec #{name} ip -o link show")
+      Veth.new(name: $LAST_MATCH_INFO[2], link_id: $LAST_MATCH_INFO[1].to_i)
     end
 
     # rubocop:disable MethodLength
@@ -118,7 +118,7 @@ module Phut
 
     def netmask
       if %r{inet [^/]+/(\d+) } =~
-         sudo("ip netns exec #{name} ip -o -4 address show dev #{device.device}")
+         sudo("ip netns exec #{name} ip -o -4 address show dev #{device}")
         IPAddr.new('255.255.255.255').mask(Regexp.last_match(1).to_i).to_s
       end
     end
