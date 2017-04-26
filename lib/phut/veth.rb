@@ -44,6 +44,7 @@ module Phut
       end
     end
     alias to_s device
+    alias to_str device
 
     def ==(other)
       name == other.name && link_id == other.link_id
