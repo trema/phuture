@@ -43,8 +43,8 @@ module Phut
     end
 
     def destroy
-      sudo "ip link delete #{end1}" rescue nil
-      sudo "ip link delete #{end2}" rescue nil
+      sudo "ip link delete #{end1} || true"
+      sudo "ip link delete #{end2} || true"
     end
     alias stop destroy
 
